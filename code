@@ -1,0 +1,62 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.18;
+
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+
+contract DegenToken is ERC20, Ownable, ERC20Burnable {
+
+    constructor(address initialOwner) ERC20("Degen", "DGN") Ownable(initialOwner) {}
+
+    function mint(address to, uint256 amount) public onlyOwner {
+        _mint(to, amount);
+    }
+
+    function burn(uint256 amount) public override {
+        require(balanceOf(msg.sender) >= amount, "Insufficient Balance");
+        _burn(msg.sender, amount);
+    }
+
+    function shop(uint256 choice) public {
+        require(choice >= 1 && choice <= 4, "Invalid action");
+
+        if (choice == 1) {
+            
+            _mint(msg.sender, 1);
+            emit Minted("You got 1 token");
+        } 
+        if (choice == 2) {
+            require(balanceOf(msg.sender) >= 2, "Insufficient Tokens for T-shirt");
+            _burn(msg.sender, 2);
+            emit BookRedeemed("You have recieved a new Book");
+        } 
+        if(choice ==3){
+             _burn(msg.sender,3);
+             emit ToyRedeemed("You have recieved a new Toy");
+        }
+        if(choice == 4){
+            _burn(msg.sender,4);
+            emit CarRedeemed("You have recieved a new Car");
+        }
+        else {
+            revert("Invalid action");
+        }
+    }
+
+    function DoubleDivideMint(uint256 a, uint256 b) public {
+        uint256 c = a / b;
+        uint256 d = c / b;
+
+        _mint(msg.sender, d);
+    }
+
+    event ToyRedeemed(string message);
+    event CarRedeemed(string message);
+    event BookRedeemed(string message);
+    event Minted(string message);
+
+    function getBalance() public view returns (uint256) {
+        return this.balanceOf(msg.sender);
+    }
+}
