@@ -22,26 +22,30 @@ contract DegenToken is ERC20, Ownable, ERC20Burnable {
         require(choice >= 1 && choice <= 4, "Invalid action");
 
         if (choice == 1) {
-            
             _mint(msg.sender, 1);
             emit Minted("You got 1 token");
         } 
         if (choice == 2) {
-            require(balanceOf(msg.sender) >= 2, "Insufficient Tokens for T-shirt");
+            require(balanceOf(msg.sender) >= 2, "Insufficient Tokens");
             _burn(msg.sender, 2);
-            emit BookRedeemed("You have recieved a new Book");
+            emit BookRedeemed("You have received a new Book");
         } 
         if(choice ==3){
              _burn(msg.sender,3);
-             emit ToyRedeemed("You have recieved a new Toy");
+             emit ToyRedeemed("You have received a new Toy");
         }
         if(choice == 4){
             _burn(msg.sender,4);
-            emit CarRedeemed("You have recieved a new Car");
+            emit CarRedeemed("You have received a new Car");
         }
         else {
             revert("Invalid action");
         }
+    }
+
+    function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
+        _transfer(_msgSender(), recipient, amount);
+        return true;
     }
 
     function DoubleDivideMint(uint256 a, uint256 b) public {
@@ -57,6 +61,6 @@ contract DegenToken is ERC20, Ownable, ERC20Burnable {
     event Minted(string message);
 
     function getBalance() public view returns (uint256) {
-        return this.balanceOf(msg.sender);
+        return balanceOf(msg.sender);
     }
 }
