@@ -6,9 +6,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
 contract DegenToken is ERC20, Ownable, ERC20Burnable {
-
-    constructor(address initialOwner) ERC20("Degen", "DGN") Ownable(initialOwner) {}
-
+    string public shop_iteams;
+    constructor(address initialOwner) ERC20("Degen", "DGN") Ownable(initialOwner) {
+    shop_iteams = "The store iteams are 1.Mint a token 2.Buy a Book(10)  3.Buy a Toy(15) 4.Buy a Car(20)";
+    }
     function mint(address to, uint256 amount) public onlyOwner {
         _mint(to, amount);
     }
@@ -19,39 +20,15 @@ contract DegenToken is ERC20, Ownable, ERC20Burnable {
     }
 
     function shop(uint256 choice) public {
-    require(choice >= 1 && choice <= 4, "Invalid action");
-
-    if (choice == 1) {
-        if (balanceOf(msg.sender) < 5) {
-            revert("Insufficient tokens to redeem a Book");
+        if(choice == 1){
+            _mint(msg.sender, 1);
         }
-        _mint(msg.sender, 1);
-        emit Minted("You got 1 token");
-    } 
-    if (choice == 2) {
-        if (balanceOf(msg.sender) < 10) {
-            revert("Insufficient tokens to redeem a Book");
+        if (balanceOf(msg.sender) < 100) {
+            revert("Insufficient Balance");
         }
-        _burn(msg.sender, 2);
-        emit BookRedeemed("You have received a new Book");
-    } 
-    if(choice == 3){
-        if (balanceOf(msg.sender) < 20) {
-            revert("Insufficient tokens to redeem a Toy");
-        }
-        _burn(msg.sender, 3);
-        emit ToyRedeemed("You have received a new Toy");
+        assert(choice > 1 && choice <= 4);
+        _burn(msg.sender, choice * 5);
     }
-    if(choice == 4){
-        if (balanceOf(msg.sender) < 50) {
-            revert("Insufficient tokens to redeem a Car");
-        }
-        _burn(msg.sender, 4);
-        emit CarRedeemed("You have received a new Car");
-    }
-    
-}
-
 
     function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
         _transfer(_msgSender(), recipient, amount);
@@ -64,11 +41,6 @@ contract DegenToken is ERC20, Ownable, ERC20Burnable {
 
         _mint(msg.sender, d);
     }
-
-    event ToyRedeemed(string message);
-    event CarRedeemed(string message);
-    event BookRedeemed(string message);
-    event Minted(string message);
 
     function getBalance() public view returns (uint256) {
         return balanceOf(msg.sender);
