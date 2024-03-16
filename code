@@ -22,25 +22,28 @@ contract DegenToken is ERC20, Ownable, ERC20Burnable {
     require(choice >= 1 && choice <= 4, "Invalid action");
 
     if (choice == 1) {
+        if (balanceOf(msg.sender) < 5) {
+            revert("Insufficient tokens to redeem a Book");
+        }
         _mint(msg.sender, 1);
         emit Minted("You got 1 token");
     } 
     if (choice == 2) {
-        if (balanceOf(msg.sender) < 2) {
+        if (balanceOf(msg.sender) < 10) {
             revert("Insufficient tokens to redeem a Book");
         }
         _burn(msg.sender, 2);
         emit BookRedeemed("You have received a new Book");
     } 
     if(choice == 3){
-        if (balanceOf(msg.sender) < 3) {
+        if (balanceOf(msg.sender) < 20) {
             revert("Insufficient tokens to redeem a Toy");
         }
         _burn(msg.sender, 3);
         emit ToyRedeemed("You have received a new Toy");
     }
     if(choice == 4){
-        if (balanceOf(msg.sender) < 4) {
+        if (balanceOf(msg.sender) < 50) {
             revert("Insufficient tokens to redeem a Car");
         }
         _burn(msg.sender, 4);
