@@ -19,29 +19,36 @@ contract DegenToken is ERC20, Ownable, ERC20Burnable {
     }
 
     function shop(uint256 choice) public {
-        require(choice >= 1 && choice <= 4, "Invalid action");
+    require(choice >= 1 && choice <= 4, "Invalid action");
 
-        if (choice == 1) {
-            _mint(msg.sender, 1);
-            emit Minted("You got 1 token");
-        } 
-        if (choice == 2) {
-            require(balanceOf(msg.sender) >= 2, "Insufficient Tokens");
-            _burn(msg.sender, 2);
-            emit BookRedeemed("You have received a new Book");
-        } 
-        if(choice ==3){
-             _burn(msg.sender,3);
-             emit ToyRedeemed("You have received a new Toy");
+    if (choice == 1) {
+        _mint(msg.sender, 1);
+        emit Minted("You got 1 token");
+    } 
+    if (choice == 2) {
+        if (balanceOf(msg.sender) < 2) {
+            revert("Insufficient tokens to redeem a Book");
         }
-        if(choice == 4){
-            _burn(msg.sender,4);
-            emit CarRedeemed("You have received a new Car");
+        _burn(msg.sender, 2);
+        emit BookRedeemed("You have received a new Book");
+    } 
+    if(choice == 3){
+        if (balanceOf(msg.sender) < 3) {
+            revert("Insufficient tokens to redeem a Toy");
         }
-        else {
-            revert("Invalid action");
-        }
+        _burn(msg.sender, 3);
+        emit ToyRedeemed("You have received a new Toy");
     }
+    if(choice == 4){
+        if (balanceOf(msg.sender) < 4) {
+            revert("Insufficient tokens to redeem a Car");
+        }
+        _burn(msg.sender, 4);
+        emit CarRedeemed("You have received a new Car");
+    }
+    
+}
+
 
     function transfer(address recipient, uint256 amount) public virtual override returns (bool) {
         _transfer(_msgSender(), recipient, amount);
